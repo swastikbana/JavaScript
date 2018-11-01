@@ -9,7 +9,7 @@ GAME RULES:
 
 */
 
-var scores, roundscore, activePlayer;
+var scores, roundscore, activePlayer, prevDice ,targetScore;
 init();
 
 document.querySelector(".btn-roll").addEventListener("click", function() {
@@ -25,8 +25,16 @@ document.querySelector(".btn-roll").addEventListener("click", function() {
   //3. Update the round score if the rolled number is not 1
 
   if (dice !== 1) {
+    if (dice === 6 && prevDice ===6) {   
+      scores[activePlayer] = 0;   
+      document.querySelector("#score-" + activePlayer).textContent = scores[activePlayer];
+      nextPlayer();
+    }
     //Add score
-    roundscore += dice;
+    else {
+      roundscore += dice;
+      prevDice = dice;
+    }    
     document.querySelector("#current-" + activePlayer).textContent = roundscore;
   } else {
     //Next player
@@ -41,10 +49,18 @@ document.querySelector(".btn-hold").addEventListener("click", function() {
   //Update the UI
   document.querySelector("#score-" + activePlayer).textContent =
     scores[activePlayer];
+  var input = document.getElementById("target-score").value;
+  var winningScore;
 
+  if(input){
+     winningScore = input;
+  }
+  else{
+    winningScore = 100;
+  }
   //Check if player won the game
 
-  if (scores[activePlayer] >= 100) {
+  if (scores[activePlayer] >= winningScore) {
     document.querySelector("#name-" + activePlayer).textContent = "Winner";
     document.querySelector(".dice").style.display = "none";
     document
@@ -66,6 +82,8 @@ function init() {
   scores = [0, 0];
   activePlayer = 0;
   roundscore = 0;
+  prevDice = 0;
+  document.getElementById("target-score").value = "";
   document.querySelector(".dice").style.display = "none";
   document.getElementById("score-0").textContent = "0";
   document.getElementById("score-1").textContent = "0";
@@ -85,6 +103,7 @@ function init() {
 function nextPlayer() {
   activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
   roundscore = 0;
+  prevDice = 0;
   document.getElementById("current-0").textContent = "0";
   document.getElementById("current-1").textContent = "0";
 
